@@ -1,8 +1,13 @@
-# Null<font color="red">E</font><font color="green">R</font>
+# Null<font color="red">E</font><font color="green">D</font>
 
-`nulled` is a Go library that provides nullable types for `bool`, `float64`, `int64`, `string`, and `time.Time`. It is built as a wrapper around the popular `gopkg.in/guregu/null.v4` library, extending it with additional functionality and convenience methods.
+Null Value Encode/Decode
 
-This library is particularly useful for handling nullable values from databases, JSON/YAML APIs, or any other source where a value can be either present or null.
+`nulled` is a Go library that provides nullable types for `bool`, `float64`, `int64`, `string`, and `time.Time`. It is
+built as a wrapper around the popular `gopkg.in/guregu/null.v4` library, extending it with additional functionality and
+convenience methods.
+
+This library is particularly useful for handling nullable values from databases, JSON/YAML APIs, or any other source
+where a value can be either present or null.
 
 ## Features
 
