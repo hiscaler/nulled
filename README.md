@@ -179,6 +179,69 @@ func main() {
 }
 ```
 
+## Integration with go-querystring/query
+
+The `nulled` types can be seamlessly integrated with `github.com/google/go-querystring/query` to encode structs into URL query parameters. This is facilitated by the `EncodeValues` method implemented on each `nulled` type, which correctly handles valid and null values.
+
+First, ensure you have `go-querystring` installed:
+
+```bash
+go get github.com/google/go-querystring/query
+```
+
+Here's an example:
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/url"
+	"time"
+
+	"github.com/google/go-querystring/query"
+	"github.com/hiscaler/nulled"
+)
+
+type MyQueryParams struct {
+	Name    nulled.String `url:"name"`
+	Age     nulled.Int    `url:"age"`
+	Active  nulled.Bool   `url:"active"`
+	Amount  nulled.Float  `url:"amount"`
+	Created nulled.Time   `url:"created"`
+	Search  nulled.String `url:"search,omitempty"` // omitempty will skip if null or empty
+}
+
+func main() {
+	params := MyQueryParams{
+		Name:    nulled.StringFrom("John Doe"),
+		Age:     nulled.IntFrom(30),
+		Active:  nulled.BoolFrom(true),
+		Amount:  nulled.FloatFrom(123.45),
+		Created: nulled.TimeFrom(time.Date(2023, 1, 15, 10, 30, 0, 0, time.UTC)),
+		Search:  nulled.StringFrom("Go Lang"),
+	}
+
+	v, _ := query.Values(params)
+	fmt.Println("Query with all valid values:", v.Encode())
+	// Output: Query with all valid values: active=true&age=30&amount=123.45&created=2023-01-15+10%3A30%3A00&name=John+Doe&search=Go+Lang
+
+	nullParams := MyQueryParams{
+		Name:    nulled.NewString("", false), // Null string
+		Age:     nulled.NewInt(0, false),    // Null int
+		Active:  nulled.NewBool(false, false), // Null bool
+		Amount:  nulled.NewFloat(0, false),  // Null float
+		Created: nulled.NewTime(time.Time{}, false), // Null time
+		Search:  nulled.NewString("", false), // Null string with omitempty
+	}
+
+	nv, _ := query.Values(nullParams)
+	fmt.Println("Query with null values:", nv.Encode())
+	// Output: Query with null values:
+}
+```
+
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue.
