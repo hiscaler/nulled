@@ -1,39 +1,34 @@
-[English](README.md) | [简体中文](README.zh-CN.md)
-
 # Null<font color="red">E</font><font color="green">D</font>
 
-Null Value Encode/Decode
+空值编码/解码
 
-`nulled` is a Go library that provides nullable types for `bool`, `float64`, `int64`, `string`, and `time.Time`. It is
-built as a wrapper around the popular `gopkg.in/guregu/null.v4` library, extending it with additional functionality and
-convenience methods.
+`nulled` 是一个 Go 库，为 `bool`, `float64`, `int64`, `string` 和 `time.Time` 提供了可空类型。它是在流行的 `gopkg.in/guregu/null.v4` 库的基础上构建的，通过额外的功能和便利方法对其进行了扩展。
 
-This library is particularly useful for handling nullable values from databases, JSON/YAML APIs, or any other source
-where a value can be either present or null.
+该库对于处理来自数据库、JSON/YAML API 或任何其他值可能存在或为空的来源的可空值特别有用。
 
-## Features
+## 特性
 
-- Provides nullable `Bool`, `Float`, `Int`, `String`, and `Time` types.
-- Seamlessly handles JSON encoding and decoding (`json.Marshaler`, `json.Unmarshaler`).
-- Supports text encoding and decoding (`encoding.TextUnmarshaler`).
-- Supports Gob encoding and decoding (`gob.GobEncoder`, `gob.GobDecoder`).
-- Helper functions to create nullable types from values and pointers.
-- Methods to safely retrieve values or a zero-value if null (`ValueOrZero`).
-- `EncodeValues` method for encoding values into `net/url.Values`.
+-   提供可空的 `Bool`, `Float`, `Int`, `String`, 和 `Time` 类型。
+-   无缝处理 JSON 编码和解码 (`json.Marshaler`, `json.Unmarshaler`)。
+-   支持文本编码和解码 (`encoding.TextUnmarshaler`)。
+-   支持 Gob 编码和解码 (`gob.GobEncoder`, `gob.GobDecoder`)。
+-   用于从值和指针创建可空类型的辅助函数。
+-   安全检索值的方法，如果为空则返回零值 (`ValueOrZero`)。
+-   用于将值编码为 `net/url.Values` 的 `EncodeValues` 方法。
 
-## Installation
+## 安装
 
-To install the `nulled` package, use `go get`:
+要安装 `nulled` 包，请使用 `go get`:
 
 ```bash
 go get github.com/hiscaler/nulled
 ```
 
-## Usage
+## 用法
 
-Here are some examples of how to use the different nullable types provided by this library.
+以下是如何使用此库提供的不同可空类型的一些示例。
 
-### String
+### String (字符串)
 
 ```go
 package main
@@ -45,15 +40,15 @@ import (
 )
 
 func main() {
-	// Valid string
+	// 有效字符串
 	s1 := nulled.StringFrom("Hello, World!")
 	fmt.Printf("s1: Value=%q, Valid=%t\n", s1.ValueOrZero(), s1.Valid)
 
-	// Null string (from empty string)
+	// 空字符串 (来自空字符串)
 	s2 := nulled.StringFrom("")
 	fmt.Printf("s2: Value=%q, Valid=%t\n", s2.ValueOrZero(), s2.Valid)
 
-	// JSON Marshalling
+	// JSON 编码
 	jsonData, _ := json.Marshal(struct {
 		S1 nulled.String
 		S2 nulled.String
@@ -62,7 +57,7 @@ func main() {
 }
 ```
 
-### Int
+### Int (整数)
 
 ```go
 package main
@@ -74,16 +69,16 @@ import (
 )
 
 func main() {
-	// Valid int
+	// 有效整数
 	i1 := nulled.IntFrom(123)
 	fmt.Printf("i1: Value=%d, Valid=%t\n", i1.ValueOrZero(), i1.Valid)
 
-	// Null int (from pointer)
+	// 空整数 (来自指针)
 	var p *int64
 	i2 := nulled.IntFromPtr(p)
 	fmt.Printf("i2: Value=%d, Valid=%t\n", i2.ValueOrZero(), i2.Valid)
 
-	// JSON Marshalling
+	// JSON 编码
 	jsonData, _ := json.Marshal(struct {
 		I1 nulled.Int
 		I2 nulled.Int
@@ -92,7 +87,7 @@ func main() {
 }
 ```
 
-### Float
+### Float (浮点数)
 
 ```go
 package main
@@ -104,15 +99,15 @@ import (
 )
 
 func main() {
-	// Valid float
+	// 有效浮点数
 	f1 := nulled.FloatFrom(123.45)
 	fmt.Printf("f1: Value=%f, Valid=%t\n", f1.ValueOrZero(), f1.Valid)
 
-	// Null float
+	// 空浮点数
 	f2 := nulled.NewFloat(0, false)
 	fmt.Printf("f2: Value=%f, Valid=%t\n", f2.ValueOrZero(), f2.Valid)
 
-	// JSON Marshalling
+	// JSON 编码
 	jsonData, _ := json.Marshal(struct {
 		F1 nulled.Float
 		F2 nulled.Float
@@ -121,7 +116,7 @@ func main() {
 }
 ```
 
-### Bool
+### Bool (布尔值)
 
 ```go
 package main
@@ -133,15 +128,15 @@ import (
 )
 
 func main() {
-	// Valid bool
+	// 有效布尔值
 	b1 := nulled.BoolFrom(true)
 	fmt.Printf("b1: Value=%t, Valid=%t\n", b1.ValueOrZero(), b1.Valid)
 
-	// Null bool
+	// 空布尔值
 	b2 := nulled.NewBool(false, false)
 	fmt.Printf("b2: Value=%t, Valid=%t\n", b2.ValueOrZero(), b2.Valid)
 
-	// JSON Marshalling
+	// JSON 编码
 	jsonData, _ := json.Marshal(struct {
 		B1 nulled.Bool
 		B2 nulled.Bool
@@ -150,7 +145,7 @@ func main() {
 }
 ```
 
-### Time
+### Time (时间)
 
 ```go
 package main
@@ -163,16 +158,16 @@ import (
 )
 
 func main() {
-	// Valid time
+	// 有效时间
 	t1 := nulled.TimeFrom(time.Now())
 	fmt.Printf("t1: Value=%s, Valid=%t\n", t1.ValueOrZero(), t1.Valid)
 
-	// Null time
+	// 空时间
 	var p *time.Time
 	t2 := nulled.TimeFromPtr(p)
 	fmt.Printf("t2: Value=%s, Valid=%t\n", t2.ValueOrZero(), t2.Valid)
 
-	// JSON Marshalling
+	// JSON 编码
 	jsonData, _ := json.Marshal(struct {
 		T1 nulled.Time
 		T2 nulled.Time
@@ -181,17 +176,17 @@ func main() {
 }
 ```
 
-## Integration with go-querystring/query
+## 与 go-querystring/query 集成
 
-The `nulled` types can be seamlessly integrated with `github.com/google/go-querystring/query` to encode structs into URL query parameters. This is facilitated by the `EncodeValues` method implemented on each `nulled` type, which correctly handles valid and null values.
+`nulled` 类型可以与 `github.com/google/go-querystring/query` 无缝集成，以将结构体编码为 URL 查询参数。这是通过在每个 `nulled` 类型上实现的 `EncodeValues` 方法来促成的，该方法能正确处理有效值和空值。
 
-First, ensure you have `go-querystring` installed:
+首先，请确保您已安装 `go-querystring`：
 
 ```bash
 go get github.com/google/go-querystring/query
 ```
 
-Here's an example:
+这是一个例子：
 
 ```go
 package main
@@ -211,7 +206,7 @@ type MyQueryParams struct {
 	Active  nulled.Bool   `url:"active"`
 	Amount  nulled.Float  `url:"amount"`
 	Created nulled.Time   `url:"created"`
-	Search  nulled.String `url:"search,omitempty"` // omitempty will skip if null or empty
+	Search  nulled.String `url:"search,omitempty"` // omitempty 如果为空或 nil 则会跳过
 }
 
 func main() {
@@ -225,29 +220,28 @@ func main() {
 	}
 
 	v, _ := query.Values(params)
-	fmt.Println("Query with all valid values:", v.Encode())
-	// Output: Query with all valid values: active=true&age=30&amount=123.45&created=2023-01-15+10%3A30%3A00&name=John+Doe&search=Go+Lang
+	fmt.Println("包含所有有效值的查询:", v.Encode())
+	// 输出: 包含所有有效值的查询: active=true&age=30&amount=123.45&created=2023-01-15+10%3A30%3A00&name=John+Doe&search=Go+Lang
 
 	nullParams := MyQueryParams{
-		Name:    nulled.NewString("", false), // Null string
-		Age:     nulled.NewInt(0, false),    // Null int
-		Active:  nulled.NewBool(false, false), // Null bool
-		Amount:  nulled.NewFloat(0, false),  // Null float
-		Created: nulled.NewTime(time.Time{}, false), // Null time
-		Search:  nulled.NewString("", false), // Null string with omitempty
+		Name:    nulled.NewString("", false), // 空字符串
+		Age:     nulled.NewInt(0, false),    // 空整数
+		Active:  nulled.NewBool(false, false), // 空布尔值
+		Amount:  nulled.NewFloat(0, false),  // 空浮点数
+		Created: nulled.NewTime(time.Time{}, false), // 空时间
+		Search:  nulled.NewString("", false), // 带 omitempty 的空字符串
 	}
 
 	nv, _ := query.Values(nullParams)
-	fmt.Println("Query with null values:", nv.Encode())
-	// Output: Query with null values:
+	fmt.Println("包含空值的查询:", nv.Encode())
+	// 输出: 包含空值的查询:
 }
 ```
 
+## 贡献
 
-## Contributing
+欢迎贡献！请随时提交拉取请求或开启一个 issue。
 
-Contributions are welcome! Please feel free to submit a pull request or open an issue.
+## 许可证
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+该项目根据 MIT 许可证授权 - 有关详细信息，请参阅 [LICENSE](LICENSE) 文件。
