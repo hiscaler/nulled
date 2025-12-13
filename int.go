@@ -101,5 +101,4 @@ func (i *Int) UnmarshalJSON(bytes []byte) error {
 	n.Valid = true
 	*i = Int(n)
 	return nil
-
 }
