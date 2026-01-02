@@ -178,3 +178,15 @@ func TestInt_GobEncoding(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, invalidInt, decodedInvalidInt)
 }
+
+func TestInt_NullValue(t *testing.T) {
+	// 验证有效 Int 的 NullValue
+	validInt := NewInt(123, true)
+	assert.True(t, validInt.NullValue().Valid)
+	assert.Equal(t, int64(123), validInt.NullValue().Int64)
+
+	// 验证无效 Int 的 NullValue
+	invalidInt := NewInt(0, false)
+	assert.False(t, invalidInt.NullValue().Valid)
+	assert.Equal(t, int64(0), invalidInt.NullValue().Int64)
+}

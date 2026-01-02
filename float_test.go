@@ -153,3 +153,15 @@ func TestFloat_GobEncoding(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, invalid, decodedInvalid)
 }
+
+func TestFloat_NullValue(t *testing.T) {
+	// 验证有效 Float 的 NullValue
+	validFloat := NewFloat(123.45, true)
+	assert.True(t, validFloat.NullValue().Valid)
+	assert.Equal(t, float64(123.45), validFloat.NullValue().Float64)
+
+	// 验证无效 Float 的 NullValue
+	invalidFloat := NewFloat(0, false)
+	assert.False(t, invalidFloat.NullValue().Valid)
+	assert.Equal(t, float64(0), invalidFloat.NullValue().Float64)
+}

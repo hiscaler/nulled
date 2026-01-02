@@ -101,3 +101,10 @@ func (f *Float) GobDecode(data []byte) error {
 	}
 	return dec.Decode(&f.Valid)
 }
+
+func (f Float) NullValue() null.Float {
+	if f.Valid {
+		return null.FloatFrom(f.Float64)
+	}
+	return null.NewFloat(0, false)
+}

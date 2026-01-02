@@ -165,3 +165,15 @@ func TestString_GobEncoding(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, invalidString, decodedInvalid)
 }
+
+func TestString_NullValue(t *testing.T) {
+	// 验证有效 String 的 NullValue
+	validString := NewString("test", true)
+	assert.True(t, validString.NullValue().Valid)
+	assert.Equal(t, "test", validString.NullValue().String)
+
+	// 验证无效 String 的 NullValue
+	invalidString := NewString("", false)
+	assert.False(t, invalidString.NullValue().Valid)
+	assert.Equal(t, "", invalidString.NullValue().String)
+}

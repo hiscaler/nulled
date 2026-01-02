@@ -104,3 +104,10 @@ func (m *String) GobDecode(data []byte) error {
 	}
 	return dec.Decode(&m.Valid)
 }
+
+func (m String) NullValue() null.String {
+	if m.Valid {
+		return null.StringFrom(m.String)
+	}
+	return null.NewString("", false)
+}

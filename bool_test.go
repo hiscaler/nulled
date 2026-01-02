@@ -172,3 +172,15 @@ func TestBool_GobEncoding(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, invalid, decodedInvalid)
 }
+
+func TestBool_NullValue(t *testing.T) {
+	// 验证有效 Bool 的 NullValue
+	validBool := NewBool(true, true)
+	assert.Equal(t, validBool.NullValue().Valid, true)
+	assert.Equal(t, validBool.NullValue().Bool, true)
+
+	// 验证无效 Bool 的 NullValue
+	invalidBool := NewBool(false, false)
+	assert.Equal(t, invalidBool.NullValue().Valid, false)
+	assert.Equal(t, invalidBool.NullValue().Bool, false)
+}

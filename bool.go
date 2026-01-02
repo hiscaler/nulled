@@ -105,3 +105,11 @@ func (b *Bool) GobDecode(data []byte) error {
 	}
 	return dec.Decode(&b.Valid)
 }
+
+func (b Bool) NullValue() null.Bool {
+	if b.Valid {
+		return null.BoolFrom(b.Bool)
+
+	}
+	return null.NewBool(false, false)
+}

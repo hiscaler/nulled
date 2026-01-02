@@ -102,3 +102,10 @@ func (i *Int) UnmarshalJSON(bytes []byte) error {
 	*i = Int(n)
 	return nil
 }
+
+func (i Int) NullValue() null.Int {
+	if i.Valid {
+		return null.IntFrom(i.Int64)
+	}
+	return null.NewInt(0, false)
+}

@@ -163,3 +163,15 @@ func TestTime_GobEncoding(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, invalid, decodedInvalid)
 }
+
+func TestTime_NullValue(t *testing.T) {
+	// 验证有效 Time 的 NullValue
+	validTime := NewTime(testTime, true)
+	assert.True(t, validTime.NullValue().Valid)
+	assert.Equal(t, testTime, validTime.NullValue().Time)
+
+	// 验证无效 Time 的 NullValue
+	invalidTime := NewTime(time.Time{}, false)
+	assert.False(t, invalidTime.NullValue().Valid)
+	assert.True(t, invalidTime.NullValue().Time.IsZero())
+}
