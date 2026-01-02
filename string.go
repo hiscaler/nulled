@@ -16,6 +16,7 @@ func NewString(s string, valid bool) String {
 	return String(null.NewString(s, valid))
 }
 func StringFrom(s string) String {
+	s = strings.TrimSpace(s)
 	if s == "" {
 		return NewString("", false)
 	}
@@ -23,10 +24,10 @@ func StringFrom(s string) String {
 }
 
 func StringFromPtr(s *string) String {
-	if s == nil || strings.TrimSpace(*s) == "" {
+	if s == nil {
 		return NewString("", false)
 	}
-	return NewString(*s, true)
+	return StringFrom(*s)
 }
 
 func (m String) ValueOrZero() string {
