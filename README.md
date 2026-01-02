@@ -15,11 +15,13 @@ where a value can be either present or null.
 
 - Provides nullable `Bool`, `Float`, `Int`, `String`, and `Time` types.
 - Seamlessly handles JSON encoding and decoding (`json.Marshaler`, `json.Unmarshaler`).
+- Implements `sql.Scanner` and `driver.Valuer` for easy database integration.
 - Supports text encoding and decoding (`encoding.TextUnmarshaler`).
 - Supports Gob encoding and decoding (`gob.GobEncoder`, `gob.GobDecoder`).
 - Helper functions to create nullable types from values and pointers.
 - Methods to safely retrieve values or a zero-value if null (`ValueOrZero`).
 - `EncodeValues` method for encoding values into `net/url.Values`.
+- `NullValue` method to get the underlying `gopkg.in/guregu/null.v4` type.
 
 ## Installation
 
@@ -179,6 +181,48 @@ func main() {
 	}{T1: t1, T2: t2})
 	fmt.Println("JSON:", string(jsonData))
 }
+```
+
+## Database Integration
+
+All `nulled` types implement the `database/sql.Scanner` and `database/sql/driver.Valuer` interfaces, making them compatible with `database/sql` out of the box.
+
+### Scanning a Null Value
+
+When you scan a `NULL` value from a database, the `nulled` type will be marked as invalid (`Valid: false`).
+
+```go
+var name nulled.String
+err := db.QueryRow("SELECT name FROM users WHERE id = 1").Scan(&name)
+// If the 'name' column is NULL, name.Valid will be false.
+```
+
+### Storing a Null Value
+
+To store a `NULL` value in the database, you can use a `nulled` type that is not valid.
+
+```go
+invalidName := nulled.NewString("", false)
+_, err := db.Exec("UPDATE users SET name = ? WHERE id = 1", invalidName)
+// This will set the 'name' column to NULL.
+```
+
+## gopkg.in/guregu/null.v4 Compatibility
+
+To maintain compatibility with the underlying `gopkg.in/guregu/null.v4` library, each `nulled` type has a `NullValue()` method that returns the corresponding `null.v4` type.
+
+```go
+import "gopkg.in/guregu/null.v4"
+
+// Get the underlying null.v4 type
+nulledString := nulled.StringFrom("hello")
+nullV4String := nulledString.NullValue() // This is a null.String
+
+// You can use it with functions that expect a null.v4 type
+func processNullV4(s null.String) {
+    // ...
+}
+processNullV4(nullV4String)
 ```
 
 ## Integration with go-querystring/query

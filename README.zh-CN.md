@@ -10,11 +10,13 @@
 
 -   提供可空的 `Bool`, `Float`, `Int`, `String`, 和 `Time` 类型。
 -   无缝处理 JSON 编码和解码 (`json.Marshaler`, `json.Unmarshaler`)。
+-   实现 `sql.Scanner` 和 `driver.Valuer`，便于数据库集成。
 -   支持文本编码和解码 (`encoding.TextUnmarshaler`)。
 -   支持 Gob 编码和解码 (`gob.GobEncoder`, `gob.GobDecoder`)。
 -   用于从值和指针创建可空类型的辅助函数。
 -   安全检索值的方法，如果为空则返回零值 (`ValueOrZero`)。
 -   用于将值编码为 `net/url.Values` 的 `EncodeValues` 方法。
+-   `NullValue` 方法可获取底层的 `gopkg.in/guregu/null.v4` 类型。
 
 ## 安装
 
@@ -174,6 +176,48 @@ func main() {
 	}{T1: t1, T2: t2})
 	fmt.Println("JSON:", string(jsonData))
 }
+```
+
+## 数据库集成
+
+所有 `nulled` 类型都实现了 `database/sql.Scanner` 和 `database/sql/driver.Valuer` 接口，使它们可以与 `database/sql` 开箱即用。
+
+### 扫描空值
+
+当您从数据库中扫描一个 `NULL` 值时，`nulled` 类型将被标记为无效 (`Valid: false`)。
+
+```go
+var name nulled.String
+err := db.QueryRow("SELECT name FROM users WHERE id = 1").Scan(&name)
+// 如果 'name' 列为 NULL，name.Valid 将为 false。
+```
+
+### 存储空值
+
+要将 `NULL` 值存储到数据库中，您可以使用一个无效的 `nulled` 类型。
+
+```go
+invalidName := nulled.NewString("", false)
+_, err := db.Exec("UPDATE users SET name = ? WHERE id = 1", invalidName)
+// 这会将 'name' 列设置为 NULL。
+```
+
+## gopkg.in/guregu/null.v4 兼容性
+
+为了保持与底层的 `gopkg.in/guregu/null.v4` 库的兼容性，每个 `nulled` 类型都有一个 `NullValue()` 方法，该方法返回相应的 `null.v4` 类型。
+
+```go
+import "gopkg.in/guregu/null.v4"
+
+// 获取底层的 null.v4 类型
+nulledString := nulled.StringFrom("hello")
+nullV4String := nulledString.NullValue() // 这是一个 null.String
+
+// 您可以将其与期望 null.v4 类型的函数一起使用
+func processNullV4(s null.String) {
+    // ...
+}
+processNullV4(nullV4String)
 ```
 
 ## 与 go-querystring/query 集成
